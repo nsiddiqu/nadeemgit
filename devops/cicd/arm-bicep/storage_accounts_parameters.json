@@ -1,0 +1,23 @@
+{
+   "environment":{
+      "value":"prod"
+   },
+   "project":{
+      "value":"dlake"
+   },
+   "storageAccountName":{
+      "value":"sms"
+   },
+   "bronzeLayer":{
+      "value":"bronze"
+   },
+   "silverLayer":{
+      "value":"silver"
+   },
+   "goldLayer":{
+      "value":"gold"
+   },
+   "location":{
+      "value":"EAST US"
+   }
+}

@@ -1,0 +1,100 @@
+trigger:
+  branches:
+    include:
+    - master
+    - devops-azure
+  paths:
+    include:
+    - devops/cicd/arm-bicep/*
+
+variables:
+  - group: 'df-cicd'
+
+#ARM Deployment Stages
+
+stages:  
+
+  - stage: Lakehouse_Storage_Account
+    jobs: 
+      - job: DeployStorageAccount
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/storage_accounts.bicep --parameters '@devops/cicd/arm-bicep/storage_accounts_parameters.json' environment=$(ENVIRONMENT) project=$(PROJECT) storageAccountName=$(LAKEHOUSE_STORAGE_ACCOUNT) bronzeLayer=$(LAKEHOUSE_BRONZE_LAYER) silverLayer=$(LAKEHOUSE_SILVER_LAYER) goldLayer=$(LAKEHOUSE_GOLD_LAYER) location='$(REGION)'
+           
+  - stage: Azure_SQL_Database
+    jobs: 
+      - job: DeployAzureSQL
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/azure_sql.bicep --parameters '@devops/cicd/arm-bicep/azure_sql_parameters.json' vaultName=$(KEY_VAULT_NAME) databaseName=$(SQL_DB_NAME) adminPasswordsecretName=$(SQL_PASSWORD_SECRET) sqlServerName=$(SQL_SERVERNAME) adminLoginUsersecretName=$(SQL_USERNAME_SECRET) vaultResourceGroupName=$(KEY_VAULT_RESOURCE_GROUP)
+           
+  - stage: EventHub
+    jobs: 
+      - job: DeployEventHub
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/event_hub.bicep --parameters '@devops/cicd/arm-bicep/event_hub_parameters.json' environment=$(ENVIRONMENT) project=$(PROJECT) topicName=$(EVENTHUB_TOPIC_NAME) subscriptionName=$(EVENTHUB_SUBSCRIPTION) eventHubNamespace=$(EVENTHUB_NAMESPACE) eventHubName=$(EVENTHUB_NAME) storageAccountName=$(EVENTHUB_STORAGE_ACCOUNT) storageAccountContainerName=$(EVENTHUB_CONTAINER) location='$(REGION)'
+
+  - stage: Datafactory
+    jobs: 
+      - job: DeployDataFactory
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/data_factory.bicep --parameters '@devops/cicd/arm-bicep/data_factory_parameters.json' environment=$(ENVIRONMENT) project=$(PROJECT) factoryName=$(DATAFACTORY_NAME)
+    
+  - stage: Databricks
+    jobs: 
+      - job: DeployDatabricks
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/databricks.bicep --parameters '@devops/cicd/arm-bicep/databricks_parameters.json' environment=$(ENVIRONMENT) project=$(PROJECT) databricksWorkspaceName=$(DATABRICKS_WORKSPACE_NAME)
+
+
+  - stage: Synapse
+    jobs: 
+      - job: DeploySynapse
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureCLI@2
+          inputs:
+            azureSubscription: '$(SERVICE_CONNECTION)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              az deployment group create --resource-group $(RESOURCE_GROUP) --template-file devops/cicd/arm-bicep/synapse.bicep --parameters '@devops/cicd/arm-bicep/synapse_parameters.json' vaultName=$(KEY_VAULT_NAME) synapseWorkspaceName=$(SYNAPSE_WORKSPACE_NAME) adminPasswordsecretName=$(SQL_PASSWORD_SECRET) adminLoginUsersecretName=$(SQL_USERNAME_SECRET) vaultResourceGroupName=$(KEY_VAULT_RESOURCE_GROUP)

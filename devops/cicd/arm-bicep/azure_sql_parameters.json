@@ -1,0 +1,20 @@
+{
+   "vaultName":{
+      "value":""
+   },
+   "databaseName":{
+      "value":"salesdb"
+   },
+    "adminPasswordsecretName":{
+      "value":"SQLPASSWORD"
+   },
+    "sqlServerName":{
+      "value":"elzsmssh"
+   },
+    "adminLoginUsersecretName":{
+      "value":"SQLUSER"
+   },
+    "vaultResourceGroupName":{
+      "value":"asg-sol"
+   }
+}

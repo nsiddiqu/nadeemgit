@@ -1,0 +1,24 @@
+{
+   "vaultName":{
+      "value":""
+   },
+   "synapseWorkspaceName":{
+      "value":"elzsms"
+   },
+    "synapseStorageAccount":{
+      "value":"sms"
+   },
+    "synapseStorageAccountFilesystem":{
+      "value":"gold"
+   },
+    "adminPasswordsecretName":{
+      "value":"SQLPASSWORD"
+   },
+    "adminLoginUsersecretName":{
+      "value":"SQLUSER"
+   },
+    "vaultResourceGroupName":{
+      "value":"asg-sol"
+   }
+}
+

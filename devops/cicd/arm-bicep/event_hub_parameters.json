@@ -1,0 +1,30 @@
+{
+   "environment":{
+      "value":"prod"
+   },
+   "project":{
+      "value":"dlake"
+   },
+   "topicName":{
+      "value":"esalessms"
+   },
+   "subscriptionName":{
+      "value":"esalesevent"
+   },
+    "eventHubNamespace":{
+      "value":"esalesnssms"
+   },
+    "eventHubName":{
+      "value":"esaleshub"
+   },
+    "storageAccountName":{
+      "value":"elzlogssms"
+   },
+    "storageAccountContainerName":{
+      "value":"ecommlogs"
+   },
+   "location":{
+      "value":"eastus"
+   }
+}
+
